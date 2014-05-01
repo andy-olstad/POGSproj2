@@ -26,7 +26,24 @@ head(flights)
 # or you could use tbl_df to print it pretty
 tbl_df(head(flights))
 
-#' Working efficiently with a remote database is a balancing act.  
+# JP: selecting only columns we need with the hope loading is faster
+flights_sub <- select(flights, year, dayofweek, deptime, uniquecarrier, depdelay, cancelled, diverted)
+
+# JP: filtering only year 2013
+year13 <- filter(flights_sub, year == "2013")
+explain(year13)
+head(year13)
+
+### tried to remove missing data but get an error
+# JP: Removing the missing data from the deptime variable corresponding to cancelled flights
+#year13_NA <- filter(year13, deptime != "NA")
+#head(year13_NA)
+class(deptime)
+
+
+
+
+##' Working efficiently with a remote database is a balancing act.  
 #' You want to balance the time it takes:
 #' 
 #' * to do work on the remote database
@@ -47,6 +64,7 @@ tbl_df(head(flights))
 #' SQL is a declarative language, you tell it what you want
 #' not how to get it.  `explain` will tell you the SQL code
 #' that will be run, and how the database plans to do it.
+
 
 # replicating a subset of hflights
 hou <- filter(flights, (year == "2011" & month == 1) &  
