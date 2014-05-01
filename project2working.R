@@ -34,14 +34,11 @@ year13 <- filter(flights_sub, year == "2013")
 explain(year13)
 head(year13)
 
-### tried to remove missing data but get an error
-# JP: Removing the missing data from the deptime variable corresponding to cancelled flights
-#year13_NA <- filter(year13, deptime != "NA")
-#head(year13_NA)
-class(deptime)
+# JP: Removed cancelled flights becasue they have a deptime = NA
+year13_NA <- filter(year13, cancelled != 1)
+head(year13_NA)
 
-
-
+# JP: group by time of day 4 categories
 
 ##' Working efficiently with a remote database is a balancing act.  
 #' You want to balance the time it takes:
