@@ -40,6 +40,12 @@ head(year13_NA)
 
 # JP: group by time of day 4 categories
 
+#AO: look at just PDX in September, because the load times are killing me:
+year13_NA_PDX<-filter(year13_NA,origin=="PDX") 
+head(year13_NA_PDX)
+
+
+
 ##' Working efficiently with a remote database is a balancing act.  
 #' You want to balance the time it takes:
 #' 
