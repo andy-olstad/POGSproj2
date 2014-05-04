@@ -31,11 +31,15 @@ tbl_df(head(flights))
 #TRUNC(crsarrtime/100) - the hour part of the time.
 #This means queries like this:
 sched_time <- select(flights, year, month, dayofmonth, 
-  crsarrtime, crsdeptime)
+  crsarrtime, crsdeptime,origin)
 sched_time_12 <- filter(sched_time, TRUNC(crsarrtime/100L) == 12) 
+sched_time_12_pdx13 <- filter(sched_time, TRUNC(crsarrtime/100L) == 12 && origin == "PDX" && year == 2013) 
+
 
 explain(sched_time_12)
-
+head(sched_time_12)
+head(sched_time_12_pdx13)
+#wow that took a long time (5 minutes)... maybe there's a better way to do it?
 
 #will use the index (you should see "Bitmap Index Scan on arr_hour" in the 
 #explain statement) and be relatively quick (the "L" on 100 is crucial for it
