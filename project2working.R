@@ -26,6 +26,25 @@ head(flights)
 # or you could use tbl_df to print it pretty
 tbl_df(head(flights))
 
+#######Charlotte's Database Modification on our behalf:
+#Instead of creating a new column I have created an index on: 
+#TRUNC(crsarrtime/100) - the hour part of the time.
+#This means queries like this:
+sched_time <- select(flights, year, month, dayofmonth, 
+  crsarrtime, crsdeptime)
+sched_time_12 <- filter(sched_time, TRUNC(crsarrtime/100L) == 12) 
+
+explain(sched_time_12)
+
+
+#will use the index (you should see "Bitmap Index Scan on arr_hour" in the 
+#explain statement) and be relatively quick (the "L" on 100 is crucial for it
+# to pick up the index). 
+#You should also be able to use it in a group_by statement (remembering the
+# L on 100).
+#I'm adding the same thing for crsdeptime,
+
+
 # JP: selecting only columns we need with the hope loading is faster
 flights_sub <- select(flights, year, dayofweek, deptime, uniquecarrier, depdelay, cancelled, diverted)
 
@@ -94,3 +113,4 @@ fpd$date <- with(fpd, ISOdate(year, month, dayofmonth))
 
 library(ggplot2)
 qplot(date, n_flights, data = fpd, geom = "line")
+
