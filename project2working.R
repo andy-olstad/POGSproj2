@@ -63,6 +63,10 @@ total_pdx13<-den<-summarize(smallpdx,length=n())
 delay_pdx13$length/total_pdx13$length
 #so 32% of flights from PDX were delayed in 2013.
 
+#AO: look at just PDX in September, because the load times are killing me:
+year13_NA_PDX<-filter(year13_NA,origin=="PDX") 
+head(year13_NA_PDX)
+
 #will use the index (you should see "Bitmap Index Scan on arr_hour" in the 
 #explain statement) and be relatively quick (the "L" on 100 is crucial for it
 # to pick up the index). 
@@ -72,7 +76,7 @@ delay_pdx13$length/total_pdx13$length
 
 
 # JP: selecting only columns we need with the hope loading is faster
-flights_sub <- select(flights, year, dayofweek, deptime, uniquecarrier, depdelay, cancelled, diverted)
+flights_sub <- select(flights, year, dayofweek, crsarrtime, uniquecarrier, arrdelay, cancelled, diverted)
 
 # JP: filtering only year 2013
 year13 <- filter(flights_sub, year == "2013")
@@ -83,11 +87,27 @@ head(year13)
 year13_NA <- filter(year13, cancelled != 1)
 head(year13_NA)
 
-# JP: group by time of day 4 categories
+# JP: group by time of day---hourly
+year13_TOD <- group_by(year13_NA, TRUNC(crsarrtime/100L))
+explain(year13_TOD)
 
-#AO: look at just PDX in September, because the load times are killing me:
-year13_NA_PDX<-filter(year13_NA,origin=="PDX") 
-head(year13_NA_PDX)
+#JP: group by the day of the week
+year13_TODay <- group_by(year13_TOD, dayofweek)
+year13_TODay <- as.data.frame(year13_TODay)
+
+explain(year13_TODay)
+dim(year13_TODay) 
+#JP: find the mean, median and length
+# do i need to collect the data before i perform these summarise calcs?
+year13_length <- summarise(year13_TODay, n_flights = n())
+year13_median <- summarise(year13_TODay, median(arrdelay))
+head(year13_median)
+year13_mean <- summarise(year13_TODay, mean(arrdelay))
+head(year13_mean)
+
+
+
+
 
 
 
