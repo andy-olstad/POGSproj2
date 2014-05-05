@@ -86,7 +86,7 @@ head(year13)
 # JP: Removed cancelled flights becasue they have a deptime = NA
 year13_NA <- filter(year13, cancelled != 1)
 head(year13_NA)
-year13_NAA <- filter(year13_NA, arrdelay != 1L)
+year13_NAA <- filter(year13_NA, diverted != 1L)
 head(year13_NAA)
 
 # JP: group by time of day---hourly
@@ -96,16 +96,20 @@ head(year13_TOD)
 
 #JP: group by the day of the week
 year13_TODay <- group_by(year13_TOD, dayofweek)
-year13_TODay <- as.data.frame(year13_TODay)
-
 explain(year13_TODay)
 dim(year13_TODay) 
-#JP: find the mean, median and length
-# do i need to collect the data before i perform these summarise calcs?
+
+# JP: make it act like a data frame in order to get summaries
+year13_TODay <- as.data.frame(year13_TODay)
+# only get the first 100,000 rows
+
+
+#JP: find the mean, median and length (of first 100,000 rows)
 year13_length <- summarise(year13_TODay, n_flights = n())
 head(year13_length)
 year13_median <- summarise(year13_TODay, median(arrdelay))
 head(year13_median)
+year13_median <- collect(year13_median)
 year13_mean <- summarise(year13_TODay, mean(arrdelay))
 head(year13_mean)
 
