@@ -75,11 +75,18 @@ head(year13_NA_PDX)
 #I'm adding the same thing for crsdeptime,
 
 
+
+
+
+
+
 # JP: selecting only columns we need with the hope loading is faster
 flights_sub <- select(flights, year, dayofweek, crsarrtime, uniquecarrier, arrdelay, cancelled, diverted, origin)
 
-# JP: filtering only year 2013
+# JP: filtering years 2011, 2012 and 2013
 year13 <- filter(flights_sub, year == "2013")
+# year13 <- filter(flights_sub, year == "2013" | year == "2012" | year == "2011")
+### Above code used up all memory when Tim tried to run it
 # explain(year13)
 # head(year13)
 
@@ -107,8 +114,7 @@ year13_Summary <- summarise(year13_TODay, n_flights = n(),
 # Can find full output by clicking in Environment on the right
 
 
-
-
+#### CHARLOTTE'S ORIGINAL CODE BELOW #####
 ##' Working efficiently with a remote database is a balancing act.  
 #' You want to balance the time it takes:
 #' 
