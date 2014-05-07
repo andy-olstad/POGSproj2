@@ -131,6 +131,8 @@ Summary_3yr <- summarise(TODay_3yr, n_flights = n(),
                          mean_delay = mean(arrdelay, na.rm = TRUE))
 #SG: save summaries to csv
 write.csv(Summary_3yr file="SG_3yr_summary.csv")
+#to read on Andy's office computer:
+#Summary_3yr<-read.csv("C:\\users\\andy.olstad\\Desktop\\GitHub\\POGSproj2\\SG_3yr_summary.csv")
 
 #JP: trying to change the column name since TRUNC is a function name I am getting errors when i try to plot
 #Summary_3yr <- mutate(Summary_3yr, Time = TRUNC(crsarrtime/100L) >= 0)
