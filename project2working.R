@@ -10,10 +10,10 @@ user <- "student"
 password <- "password"
 
 ontime <- src_postgres("ontime", 
-  host = endpoint,
-  port = 5432,
-  user = user,
-  password = password)
+                       host = endpoint,
+                       port = 5432,
+                       user = user,
+                       password = password)
 # -------- #
 flights <- tbl(ontime, "flights")
 #' `flights` is special object, it points to the remote database, but
@@ -26,12 +26,15 @@ head(flights)
 # or you could use tbl_df to print it pretty
 tbl_df(head(flights))
 
+
+### I believe this was Andy's initial code here ###
+
 #######Charlotte's Database Modification on our behalf:
 #Instead of creating a new column I have created an index on: 
 #TRUNC(crsarrtime/100) - the hour part of the time.
 #This means queries like this:
 sched_time <- select(flights, year, month, dayofmonth, 
-  crsarrtime, crsdeptime,origin,arrdelay,depdelay)
+                     crsarrtime, crsdeptime,origin,arrdelay,depdelay)
 sched_time_12 <- filter(sched_time, TRUNC(crsarrtime/100L) == 12) 
 sched_time_12_pdx13 <- filter(sched_time_12, origin == "PDX" && year == 2013) 
 
@@ -49,9 +52,9 @@ smallpdx_df<-tbl_df(smallpdx)
 
 #AO what can we learn about these delays?
 summarise(smallpdx_df, 
-med_arr_delay = median(arrdelay, na.rm=TRUE),
-mean_arr_delay = mean(arrdelay, na.rm=TRUE),
-IQR_arr_delay = IQR(arrdelay, na.rm=TRUE))
+          med_arr_delay = median(arrdelay, na.rm=TRUE),
+          mean_arr_delay = mean(arrdelay, na.rm=TRUE),
+          IQR_arr_delay = IQR(arrdelay, na.rm=TRUE))
 
 #AO find a ratio
 delay_pdx13<-summarize(filter(smallpdx, arrdelay>0),length=n())
@@ -74,78 +77,46 @@ head(year13_NA_PDX)
 # L on 100).
 #I'm adding the same thing for crsdeptime,
 
-
- 
-
+### END OF ANDY's CODE
 
 
+
+## THE MAIN CODING IS HERE SO FAR
+
+### Tim's modification of Jasmine/Sarah's code, which has less commands and runs fast
 
 # JP: selecting only columns we need with the hope loading is faster
-#flights_sub <- select(flights, year, dayofweek, crsarrtime, uniquecarrier, arrdelay, cancelled, diverted, origin)
-flights_sub <- select(flights, year, dayofweek, crsarrtime, arrdelay, cancelled, diverted)
+flights_sub <- select(flights, year, dayofweek, crsdeptime, arrdelay)
 
+# TS: Filtering the 3 years we want
+year3 <- filter(flights_sub, year == 2013L | year == 2012L | year == 2011L)
 
-# JP: filtering years 2011, 2012 and 2013
-#year13 <- filter(flights_sub, year == "2013")
-year13 <- filter(flights_sub, year == "2013" | year == "2012" | year == "2011")
-### Above code used up all memory when Tim tried to run it
-# explain(year13)
-# head(year13)
+# TS: Grouping first by Day of Week, and then by Hour (time) of Day
+year3_TOD <- group_by(year3, dayofweek, time = (TRUNC(crsdeptime/100L)))
+# explain(year3_TOD)
 
-# JP: Removed cancelled flights becasue they have a deptime = NA
-year13_NA <- filter(year13, cancelled == "0")
-year13_NAA <- filter(year13_NA, diverted == "0")
+# TS: We can summarise()before we collect, which makes things run very fast.
+# TS: Note that we are using mean_delay, and forcing all negative delays to be zero (no reward for early arrival)
+# TS: Also note that SQL will automatically filter the NA's in arrdelay. However, there is one NA for 'time' which is addressed later
+Summary_3yr <- summarise(year3_TOD, n_flights = n(),
+                         mean_delay = mean(as.integer(arrdelay > 0)*arrdelay))
+# explain(Summary_3yr)
 
-# JP: group by time of day---hourly
-#SG: rename hourly time
-year13_TOD <- group_by(year13_NAA, time = (TRUNC(crsarrtime/100L)))
-# explain(year13_TOD)
+system.time(year3_TODay <- collect(Summary_3yr))
+# Good news, everyone! This collect() only took Tim about 2.5 minutes!
 
-#JP: group by the day of the week
-year13_TODay <- group_by(year13_TOD, dayofweek)
-# explain(year13_TODay)
+# Now there is
+year3_Summary <- filter(year3_TODay, !is.na(time))
+year3_Summary <- arrange(year3_TODay, dayofweek, time)
 
-#SG: remove unnecessary columns
-year13_TODay <- select(year13_TODay, year, dayofweek, arrdelay,time)
-
-system.time(year13_TODay <- collect(year13_TODay))
-# This took Tim about 8 minutes to run
-#SG: smaller set takes ~3 mins
-
-#SG: remove NA times
-TODay_3yr <- filter(year13_TODay, time != 'NA')
-#SG: how do we want to handle 24? It's part of the 0 hour,
-# but it means flights left the night before, which may
-# introduce some confounding variables
-# N is also very low compared to all other hours...data encoding issue?
-
-
-# had to group_by again after I collected the data
-TODay_3yr <- group_by(TODay_3yr, time)
-TODay_3yr <- group_by(TODay_3yr, dayofweek)
-
-#JP: find the mean, median and length 
-#SG: na.rm needs to be inside mean/median function call
-Summary_3yr <- summarise(TODay_3yr, n_flights = n(),
-                         med_delay = median(arrdelay, na.rm = TRUE),
-                         mean_delay = mean(arrdelay, na.rm = TRUE))
-#SG: save summaries to csv
-write.csv(Summary_3yr file="SG_3yr_summary.csv")
-#to read on Andy's office computer:
-#Summary_3yr<-read.csv("C:\\users\\andy.olstad\\Desktop\\GitHub\\POGSproj2\\SG_3yr_summary.csv")
-
-#JP: trying to change the column name since TRUNC is a function name I am getting errors when i try to plot
-#Summary_3yr <- mutate(Summary_3yr, Time = TRUNC(crsarrtime/100L) >= 0)
-
-
-# JP: save summaries file as csv so everyone can access
-write.csv(Summary_3yr, file="3_year_summary.csv")
+write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 # Can find full output by clicking in Environment on the right
 
 # JP: Plot
+# TS: Changed median to mean
 library(ggplot2)
-qplot(dayofweek, med_delay, data = Summary_3yr, color = time)
-qplot(time, med_delay, data = Summary_3yr, color = dayofweek)
+qplot(dayofweek, mean_delay, data = Summary_3yr, color = time)
+qplot(time, mean_delay, data = Summary_3yr, color = dayofweek)
 
 plot <- ggplot() +
   layer(data = Summary_3yr,
@@ -167,72 +138,4 @@ plot
 
 #can we summarize before collect?
 #########################################################################################
-
-
-#### CHARLOTTE'S ORIGINAL CODE BELOW #####
-##' Working efficiently with a remote database is a balancing act.  
-#' You want to balance the time it takes:
-#' 
-#' * to do work on the remote database
-#' * to transfer data from the database to R
-#' * to do work on local data.frames in R
-
-#' Databases are very good at subsetting, grouped operations and 
-#' basic summaries, especially if the columns of interest are indexed.
-#' In flights, there are already indexes on:
-#' 
-#' * year
-#' * year, month, dayofmonth,
-#' * origin
-#' * dest
-#' * uniquecarrier
-#' * flightnum
-
-#' SQL is a declarative language, you tell it what you want
-#' not how to get it.  `explain` will tell you the SQL code
-#' that will be run, and how the database plans to do it.
-
-
-# replicating a subset of hflights
-hou <- filter(flights, (year == "2011" & month == 1) &  
-    (origin == "HOU" | origin == "IAH"))
-# nothing has executed yet
-explain(hou) 
-hou # now it executes 
-# hou_local <- collect(hou)
-
-
-
-# finding number of flights departing per day at PDX last year
-pdx <- filter(flights, origin == "PDX" & year == "2013")
-pdx_by_day <- group_by(pdx, year, month, dayofmonth)
-flights_per_day <- summarise(pdx_by_day, n_flights = n())
-explain(flights_per_day)
-
-flights_per_day # looks good
-flights_per_day$year # but it isn't behaving like a data.frame
-# because the entire result hasn't actually been brought into R yet.
-fpd <- collect(flights_per_day)
-
-fpd$date <- with(fpd, ISOdate(year, month, dayofmonth))
-
-library(ggplot2)
-qplot(date, n_flights, data = fpd, geom = "line")
-
-
-######Tim's trial code:
-flights_sub <- select(flights, year, dayofweek, crsdeptime, arrdelay, cancelled, diverted)
-
-year3 <- filter(flights_sub, year == 2013L | year == 2012L | year == 2011L, cancelled == "0", diverted == "0")
-
-year3_TOD <- group_by(year3, dayofweek, time = (TRUNC(crsdeptime/100L)))
-
-system.time(year3_TODay <- collect(year3_TOD))
-
-Summary_3yr <- summarise(year3_TODay, n_flights = n(),
-                          med_delay = median(arrdelay),
-                          mean_delay = mean(arrdelay))
-
-#setwd("c:\\users\\andy.olstad\\desktop\\GitHub\\POGSproj2")
-write.csv(Summary_3yr, file="3_year_summary_NEW.csv")
 
