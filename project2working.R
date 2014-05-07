@@ -95,17 +95,23 @@ year13_NA <- filter(year13, cancelled == "0")
 year13_NAA <- filter(year13_NA, diverted == "0")
 
 # JP: group by time of day---hourly
-year13_TOD <- group_by(year13_NAA, TRUNC(crsarrtime/100L))
+#SG: rename hourly time
+year13_TOD <- group_by(year13_NAA, time = (TRUNC(crsarrtime/100L)))
 # explain(year13_TOD)
 
 #JP: group by the day of the week
 year13_TODay <- group_by(year13_TOD, dayofweek)
 # explain(year13_TODay)
 
+#SG: remove unnecessary columns
+year13_TODay <- select(year13_TODay, year, dayofweek, arrdelay,time)
+
 system.time(year13_TODay <- collect(year13_TODay))
 # This took Tim about 8 minutes to run
+#SG: smaller set takes ~3 mins
 
 TODay_3yr <- filter(year13_TODay, arrdelay != 'NA')
+#SG: there are no NAs
 
 # had to group_by again after I collected the data
 TODay_3yr <- group_by(TODay_3yr, TRUNC(crsarrtime/100L))
