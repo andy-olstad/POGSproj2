@@ -105,14 +105,29 @@ year13_TODay <- group_by(year13_TOD, dayofweek)
 system.time(year13_TODay <- collect(year13_TODay))
 # This took Tim about 8 minutes to run
 
+TODay_3yr <- filter(year13_TODay, arrdelay != 'NA')
 
-#JP: find the mean, median and length (of first 100,000 rows)
-year13_Summary <- summarise(year13_TODay, n_flights = n(),
-                        med_delay = median(arrdelay),
-                        mean_delay = mean(arrdelay))
+# had to group_by again after I collected the data
+TODay_3yr <- group_by(TODay_3yr, TRUNC(crsarrtime/100L))
+TODay_3yr <- group_by(TODay_3yr, dayofweek)
 
+#JP: find the mean, median and length 
+Summary_3yr <- summarise(TODay_3yr, n_flights = n(),
+                         med_delay = median(arrdelay), na.rm = TRUE,
+                         mean_delay = mean(arrdelay), na.rm = TRUE)
+
+#JP: trying to change the column name since TRUNC is a function name I am getting errors when i try to plot
+#Summary_3yr <- mutate(Summary_3yr, Time = TRUNC(crsarrtime/100L) >= 0)
+
+
+# JP: save summaries file as csv so everyone can access
+write.csv(Summary_3yr, file="3_year_summary.csv")
 # Can find full output by clicking in Environment on the right
 
+# JP: Plot
+library(ggplot2)
+qplot(dayofweek, med_delay, data = Summary_3yr, color = TRUNC(crsarrtime/100L))
+qplot(TRUNC(crsarrtime/100L), med_delay, data = Summary_3yr, color = dayofweek )
 
 #### CHARLOTTE'S ORIGINAL CODE BELOW #####
 ##' Working efficiently with a remote database is a balancing act.  
