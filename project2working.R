@@ -114,15 +114,16 @@ write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 
 # JP: Plot
 # TS: Changed median to mean
+# JP: changed to year3_Summary
 library(ggplot2)
-qplot(dayofweek, mean_delay, data = Summary_3yr, color = time)
-qplot(time, mean_delay, data = Summary_3yr, color = dayofweek)
+qplot(dayofweek, mean_delay, data = year3_Summary, color = time)
+qplot(time, mean_delay, data = year3_Summary, color = dayofweek)
 
 plot <- ggplot() +
-  layer(data = Summary_3yr,
+  layer(data = year3_Summary,
         stat = "identity",
         geom = "line",
-        mapping = aes(x = time, y = med_delay, color = dayofweek, facet_grid = dayofweek))
+        mapping = aes(x = time, y = mean_delay, color = dayofweek, facet_grid = dayofweek))
 plot
 
 
