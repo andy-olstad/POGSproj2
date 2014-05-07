@@ -129,6 +129,8 @@ TODay_3yr <- group_by(TODay_3yr, dayofweek)
 Summary_3yr <- summarise(TODay_3yr, n_flights = n(),
                          med_delay = median(arrdelay, na.rm = TRUE),
                          mean_delay = mean(arrdelay, na.rm = TRUE))
+#SG: save summaries to csv
+write.csv(Summary_3yr file="SG_3yr_summary.csv")
 
 #JP: trying to change the column name since TRUNC is a function name I am getting errors when i try to plot
 #Summary_3yr <- mutate(Summary_3yr, Time = TRUNC(crsarrtime/100L) >= 0)
@@ -142,6 +144,28 @@ write.csv(Summary_3yr, file="3_year_summary.csv")
 library(ggplot2)
 qplot(dayofweek, med_delay, data = Summary_3yr, color = time)
 qplot(time, med_delay, data = Summary_3yr, color = dayofweek)
+
+plot <- ggplot() +
+  layer(data = Summary_3yr,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x = time, y = med_delay, color = dayofweek, facet_grid = dayofweek))
+plot
+
+
+#########################################################################################
+#TODO:
+# need to group on departure time, not arrival
+# then look at arrival delay based on the time of day you left
+# this should hopefully remove the need to deal with the 24h time snafu
+
+# graph by day
+
+# truncate arrival delay to remove negatives?
+
+#can we summarize before collect?
+#########################################################################################
+
 
 #### CHARLOTTE'S ORIGINAL CODE BELOW #####
 ##' Working efficiently with a remote database is a balancing act.  
