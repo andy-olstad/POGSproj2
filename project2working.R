@@ -81,11 +81,13 @@ head(year13_NA_PDX)
 
 
 # JP: selecting only columns we need with the hope loading is faster
-flights_sub <- select(flights, year, dayofweek, crsarrtime, uniquecarrier, arrdelay, cancelled, diverted, origin)
+#flights_sub <- select(flights, year, dayofweek, crsarrtime, uniquecarrier, arrdelay, cancelled, diverted, origin)
+flights_sub <- select(flights, year, dayofweek, crsarrtime, arrdelay, cancelled, diverted)
+
 
 # JP: filtering years 2011, 2012 and 2013
-year13 <- filter(flights_sub, year == "2013")
-# year13 <- filter(flights_sub, year == "2013" | year == "2012" | year == "2011")
+#year13 <- filter(flights_sub, year == "2013")
+year13 <- filter(flights_sub, year == "2013" | year == "2012" | year == "2011")
 ### Above code used up all memory when Tim tried to run it
 # explain(year13)
 # head(year13)
@@ -110,17 +112,23 @@ system.time(year13_TODay <- collect(year13_TODay))
 # This took Tim about 8 minutes to run
 #SG: smaller set takes ~3 mins
 
-TODay_3yr <- filter(year13_TODay, arrdelay != 'NA')
-#SG: there are no NAs
+#SG: remove NA times
+TODay_3yr <- filter(year13_TODay, time != 'NA')
+#SG: how do we want to handle 24? It's part of the 0 hour,
+# but it means flights left the night before, which may
+# introduce some confounding variables
+# N is also very low compared to all other hours...data encoding issue?
+
 
 # had to group_by again after I collected the data
-TODay_3yr <- group_by(TODay_3yr, TRUNC(crsarrtime/100L))
+TODay_3yr <- group_by(TODay_3yr, time)
 TODay_3yr <- group_by(TODay_3yr, dayofweek)
 
 #JP: find the mean, median and length 
+#SG: na.rm needs to be inside mean/median function call
 Summary_3yr <- summarise(TODay_3yr, n_flights = n(),
-                         med_delay = median(arrdelay), na.rm = TRUE,
-                         mean_delay = mean(arrdelay), na.rm = TRUE)
+                         med_delay = median(arrdelay, na.rm = TRUE),
+                         mean_delay = mean(arrdelay, na.rm = TRUE))
 
 #JP: trying to change the column name since TRUNC is a function name I am getting errors when i try to plot
 #Summary_3yr <- mutate(Summary_3yr, Time = TRUNC(crsarrtime/100L) >= 0)
@@ -132,8 +140,8 @@ write.csv(Summary_3yr, file="3_year_summary.csv")
 
 # JP: Plot
 library(ggplot2)
-qplot(dayofweek, med_delay, data = Summary_3yr, color = TRUNC(crsarrtime/100L))
-qplot(TRUNC(crsarrtime/100L), med_delay, data = Summary_3yr, color = dayofweek )
+qplot(dayofweek, med_delay, data = Summary_3yr, color = time)
+qplot(time, med_delay, data = Summary_3yr, color = dayofweek)
 
 #### CHARLOTTE'S ORIGINAL CODE BELOW #####
 ##' Working efficiently with a remote database is a balancing act.  
