@@ -219,3 +219,20 @@ fpd$date <- with(fpd, ISOdate(year, month, dayofmonth))
 library(ggplot2)
 qplot(date, n_flights, data = fpd, geom = "line")
 
+
+######Tim's trial code:
+flights_sub <- select(flights, year, dayofweek, crsdeptime, arrdelay, cancelled, diverted)
+
+year3 <- filter(flights_sub, year == 2013L | year == 2012L | year == 2011L, cancelled == "0", diverted == "0")
+
+year3_TOD <- group_by(year3, dayofweek, time = (TRUNC(crsdeptime/100L)))
+
+system.time(year3_TODay <- collect(year3_TOD))
+
+Summary_3yr <- summarise(year3_TODay, n_flights = n(),
+                          med_delay = median(arrdelay),
+                          mean_delay = mean(arrdelay))
+
+#setwd("c:\\users\\andy.olstad\\desktop\\GitHub\\POGSproj2")
+write.csv(Summary_3yr, file="3_year_summary_NEW.csv")
+
