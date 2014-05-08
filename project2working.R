@@ -106,7 +106,7 @@ system.time(year3_TODay <- collect(Summary_3yr))
 # Good news, everyone! This collect() only took Tim about 2.5 minutes!
 
 # Now there is
-year3_Summary <- filter(year3_TODay, !is.na(time))
+year3_Summary <- filter(year3_TODay, time >= 0 )
 year3_Summary <- arrange(year3_TODay, dayofweek, time)
 
 write.csv(year3_Summary, file="3_year_summary_NEW.csv")
