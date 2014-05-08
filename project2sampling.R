@@ -79,7 +79,17 @@ summary(Monday_local$arrdelay)
 Monday_local_df<-tbl_df(Monday_local)
 MondayHrs<-mutate(Monday_local, hour = trunc(crsdeptime/100L))
 MondayGrouped<-group_by(MondayHrs, hour)
-summarize(MondayGrouped, median_delay = median(arrdelay, na.rm=TRUE), count = n())
+
+Expanded_MondayGrouped<-mutate(MondayGrouped, delay = ifelse(arrdelay>0,1,0))
+
+Summary_Monday <- summarize(Expanded_MondayGrouped, 
+median_delay = median(arrdelay, na.rm=TRUE), 
+count = n(),
+mean_delay = mean(arrdelay,na.rm=TRUE),
+count_delays = sum(delay,na.rm=TRUE))
+
+Summary_Monday
+mutate(Summary_Monday, proportion_delay = count_delays/count)
 
 #   hour median_delay count
 #1     0           -8     6
@@ -104,6 +114,84 @@ summarize(MondayGrouped, median_delay = median(arrdelay, na.rm=TRUE), count = n(
 #20   22           -1    65
 #21   23           -8    23
 #seems very weird that no 22 or 23....
+
+
+###############
+#Sampling for a particular 1-hour period:
+pop_summary<-read.csv(file="3_year_summary_NEW.csv")
+#pop_summary: some of these are pretty tiny, we probably don't need to sample them...
+
+#let's start by sampling noon on Tuesday:
+pop_summary[which(pop_summary$dayofweek==2 & pop_summary$time==12),]
+n<-pop_summary[which(pop_summary$dayofweek==2 & pop_summary$time==12),4]
+prob<-2000/n
+
+TuesNoon <- select(flights, year, month, dayofmonth, dayofweek,crsdeptime,arrdelay)
+TuesNoon2 <- filter(TuesNoon, TRUNC(crsdeptime/100L) == 12L & dayofweek ==2L & year %in% c(2011L,2012L,2013L)) 
+
+TuesNoonRandom <- filter(TuesNoon2, random() < prob)
+
+system.time(TuesNoonLocal <- collect(TuesNoonRandom))
+#L makes things fast!
+TuesNoonLocal
+
+dim(TuesNoonLocal)
+summary(TuesNoonLocal$arrdelay)
+
+
+
+######Now using that as an exemplar, let's try to loop through all of Tuesday
+
+
+
+for(i in 0:23){
+pop_summary[which(pop_summary$dayofweek==2 & pop_summary$time==i),]
+n<-pop_summary[which(pop_summary$dayofweek==2 & pop_summary$time==i),4]
+prob<-2000/n
+
+Tues <- select(flights, year, month, dayofmonth, dayofweek,
+                      crsdeptime,arrdelay)
+Tues2 <- filter(Tues, TRUNC(crsdeptime/100L) == as.integer(i) & dayofweek ==2L & year %in% c(2011L,2012L,2013L)) 
+
+TuesRandom <- filter(Tues2, random() < prob)
+
+system.time(TuesLocal <- collect(TuesRandom))
+#L makes things fast!
+
+write.csv(TuesLocal,file= paste("Day","Tues","Hour",i))
+
+#dim(TuesLocal)
+#summary(TuesLocal$arrdelay)
+}
+
+#read.csv(paste("Day","Tues","Hour",i))
+
+
+######Now using that as an exemplar, let's try to loop through all week
+
+
+for(j in 1:7){
+
+for(i in 0:23){
+pop_summary[which(pop_summary$dayofweek==j & pop_summary$time==i),]
+n<-pop_summary[which(pop_summary$dayofweek==j & pop_summary$time==i),4]
+prob<-2000/n
+
+Day <- select(flights, year, month, dayofmonth, dayofweek,
+                      crsdeptime,arrdelay)
+Day2 <- filter(Day, TRUNC(crsdeptime/100L) == as.integer(i) & dayofweek ==as.integer(j) & year %in% c(2011L,2012L,2013L)) 
+
+DayRandom <- filter(Day2, random() < prob)
+
+system.time(DayLocal <- collect(DayRandom))
+#L makes things fast!
+
+write.csv(DayLocal,file= paste("Day",j,"Hour",i))
+
+#dim(TuesLocal)
+#summary(TuesLocal$arrdelay)
+}
+}
 
 #complex survey design ideas:
 library(survey)
