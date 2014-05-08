@@ -112,6 +112,9 @@ year3_Summary <- arrange(year3_TODay, dayofweek, time)
 write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 # Can find full output by clicking in Environment on the right
 
+# SG: read in summary csv
+year3_Summary <- read.csv("3_year_summary_NEW.csv", header = T, stringsAsFactors = F)
+
 # JP: Plot
 # TS: Changed median to mean
 # JP: changed to year3_Summary
@@ -119,24 +122,34 @@ library(ggplot2)
 qplot(dayofweek, mean_delay, data = year3_Summary, color = time)
 qplot(time, mean_delay, data = year3_Summary, color = dayofweek)
 
+# SG: changed to line plot
 plot <- ggplot() +
   layer(data = year3_Summary,
         stat = "identity",
         geom = "line",
-        mapping = aes(x = time, y = mean_delay, color = dayofweek, facet_grid = dayofweek))
+        mapping = aes(x = time, 
+                      y = mean_delay, 
+                      color = as.factor(dayofweek))) +
+  xlab("Time of departure") +
+  ylab("Mean delay (minutes)") +
+  scale_color_discrete(name = "Day of week",
+                      breaks = c("1","2","3","4","5","6","7"),
+                      labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                 "Friday", "Saturday", "Sunday"))
+
 plot
 
 
 #########################################################################################
 #TODO:
-# need to group on departure time, not arrival
-# then look at arrival delay based on the time of day you left
+# need to group on departure time, not arrival - done
+# then look at arrival delay based on the time of day you left 
 # this should hopefully remove the need to deal with the 24h time snafu
 
-# graph by day
+# graph by day - done
 
-# truncate arrival delay to remove negatives?
+# truncate arrival delay to remove negatives? - done
 
-#can we summarize before collect?
+#can we summarize before collect? - done
 #########################################################################################
 
