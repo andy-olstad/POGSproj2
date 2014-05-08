@@ -104,3 +104,15 @@ summarize(MondayGrouped, median_delay = median(arrdelay, na.rm=TRUE), count = n(
 #20   22           -1    65
 #21   23           -8    23
 #seems very weird that no 22 or 23....
+
+#complex survey design ideas:
+library(survey)
+daysANDtimes<-c(1:28)
+daysANDtimesSizes<-c(2:29)
+for(i in 1:28){
+daysANDtimesSizes[i]<-5*i
+}
+
+svydesign(~0, probs=daysANDtimesSizes, strata = daysANDtimes, variables = NULL, fpc=NULL,
+data = NULL, nest = TRUE, check.strata = FALSE, weights=NULL,pps=FALSE)
+
