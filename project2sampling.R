@@ -193,14 +193,112 @@ write.csv(DayLocal,file= paste("Day",j,"Hour",i))
 }
 }
 
-#complex survey design ideas:
-library(survey)
-daysANDtimes<-c(1:28)
-daysANDtimesSizes<-c(2:29)
-for(i in 1:28){
-daysANDtimesSizes[i]<-5*i
+########Now capturing data
+####Lower & Upper Confidence Bounds
+####Mean, Median
+####IQR, Q1, Q3
+
+
+
+data<-read.csv(paste("Day",5,"Hour",13))
+#summary(data$arrdelay)
+median<-median(data$arrdelay,na.rm=TRUE)
+avg<-mean(data$arrdelay,na.rm=TRUE)
+
+#confidence interval (cf cyclismo.org)
+s<-sd(data$arrdelay,na.rm=TRUE)
+n<-nrow(data[which(!is.na(data[,7])),])
+error <- qt(0.975,df=n-1)*s/sqrt(n)
+left <- avg-error
+right <- avg+error
+
+#confidence interval after scrubbing negatives:
+adjusted_mean_delay<-sum(data$arrdelay[which(data$arrdelay>0)],rm.na=TRUE)/n
+s_adj<-sd(data$arrdelay[which(data$arrdelay>0)],na.rm=TRUE)
+error_adj <- qt(0.975,df=n-1)*s_adj/sqrt(n)
+left_adj <- adjusted_mean_delay-error_adj
+right_adj <- adjusted_mean_delay+error_adj
+
+proportion_delay<-nrow(data[which(data[,7]>0),])/n
+iqr<-IQR(data$arrdelay,na.rm=TRUE)
+N<-pop_summary[which(pop_summary$dayofweek==5 & pop_summary$time==13),4]
+
+
+#build a data frame to store this information:
+sample_summary_df = data.frame(matrix(vector(), 168, 13, dimnames=list(c(), c("Day","Hour","Mean", "Median", "IQR", "LowerCL","UpperCL", "n_sample", "N_pop", "Proportion_Delay","Mean_adj","LowerCL_adj","UpperCL_adj"))), stringsAsFactors=F)
+
+#hand populate that dataframe
+sample_summary_df[133,1]<-5
+sample_summary_df[133,2]<-13
+sample_summary_df[133,3]<-avg
+sample_summary_df[133,4]<-median
+sample_summary_df[133,5]<-iqr
+sample_summary_df[133,6]<-left
+sample_summary_df[133,7]<-right
+sample_summary_df[133,8]<-n
+sample_summary_df[133,9]<-N
+sample_summary_df[133,10]<-proportion_delay
+sample_summary_df[133,11]<-adjusted_mean_delay
+sample_summary_df[133,12]<-left_adj
+sample_summary_df[133,13]<-right_adj
+
+#now let's loop it!
+for(i in 1:168){
+d<-ceiling(i/24)
+h<- (i-1) %% 24
+data<-read.csv(paste("Day",d,"Hour",h))
+#summary(data$arrdelay)
+median<-median(data$arrdelay,na.rm=TRUE)
+avg<-mean(data$arrdelay,na.rm=TRUE)
+
+#confidence interval (cf cyclismo.org)
+s<-sd(data$arrdelay,na.rm=TRUE)
+n<-nrow(data[which(!is.na(data[,7])),])
+error <- qt(0.975,df=n-1)*s/sqrt(n)
+left <- avg-error
+right <- avg+error
+
+#confidence interval after scrubbing negatives:
+adjusted_mean_delay<-sum(data$arrdelay[which(data$arrdelay>0)],rm.na=TRUE)/n
+s_adj<-sd(data$arrdelay[which(data$arrdelay>0)],na.rm=TRUE)
+error_adj <- qt(0.975,df=n-1)*s_adj/sqrt(n)
+left_adj <- adjusted_mean_delay-error_adj
+right_adj <- adjusted_mean_delay+error_adj
+
+proportion_delay<-nrow(data[which(data[,7]>0),])/n
+iqr<-IQR(data$arrdelay,na.rm=TRUE)
+N<-pop_summary[which(pop_summary$dayofweek==d & pop_summary$time==h),4]
+
+sample_summary_df[i,1]<-d
+sample_summary_df[i,2]<-h
+sample_summary_df[i,3]<-avg
+sample_summary_df[i,4]<-median
+sample_summary_df[i,5]<-iqr
+sample_summary_df[i,6]<-left
+sample_summary_df[i,7]<-right
+sample_summary_df[i,8]<-n
+sample_summary_df[i,9]<-N
+sample_summary_df[i,10]<-proportion_delay
+sample_summary_df[i,11]<-adjusted_mean_delay
+sample_summary_df[i,12]<-left_adj
+sample_summary_df[i,13]<-right_adj
 }
 
-svydesign(~0, probs=daysANDtimesSizes, strata = daysANDtimes, variables = NULL, fpc=NULL,
-data = NULL, nest = TRUE, check.strata = FALSE, weights=NULL,pps=FALSE)
+write.csv(sample_summary_df,"SamplingResults")
+plot(sample_summary_df$Hour,sample_summary_df$Mean)
+#Looks Familiar!!!
+
+
+#complex survey design ideas:
+#library(survey)
+#daysANDtimes<-c(1:28)
+#daysANDtimesSizes<-c(2:29)
+#for(i in 1:28){
+#daysANDtimesSizes[i]<-5*i
+#}
+#filter(tbl_df(data),!is.na(arrdelay))
+#
+#
+#svydesign(~0, probs=daysANDtimesSizes, strata = daysANDtimes, variables = NULL, fpc=NULL,
+#data = NULL, nest = TRUE, check.strata = FALSE, weights=NULL,pps=FALSE)
 
