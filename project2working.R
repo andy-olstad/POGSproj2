@@ -58,6 +58,10 @@ system.time(year3_TODay <- collect(Summary_3yr))
 year3_Summary <- filter(year3_TODay, time >= 0 )
 year3_Summary <- arrange(year3_Summary, dayofweek, time)
 
+# New Data set for geom_ribbon
+new <- group_by(year3_Summary, time, add=FALSE)
+ribbon_data <- summarise(new, min_delay=min(mean_delay), max_delay=max(mean_delay))
+
 write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 # Can find full output by clicking in Environment on the right
 
@@ -78,7 +82,7 @@ plot <- ggplot() +
         geom = "line",
         mapping = aes(x = time, 
                       y = mean_delay, 
-                      color = as.factor(dayofweek))) +
+                      color = as.factor(dayofweek))) + 
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
   scale_color_discrete(name = "Day of week",
@@ -87,3 +91,15 @@ plot <- ggplot() +
                                  "Friday", "Saturday", "Sunday"))
 
 plot
+
+# Tim working on the above plot
+# Success! This gives an "outline" of the population data that we can use for the superimposing
+plot <- ggplot(data = ribbon_data, mapping = aes(x = time)) + 
+  geom_ribbon(aes(ymin=min_delay, ymax=max_delay), fill="#999999") + 
+  xlab("Time of departure") +
+  ylab("Mean delay (minutes)")
+
+plot
+# Try using geom_ribbon on the min and max maen delay per hour
+# First we will have to extract the min/max per day per hour into another data set
+# geom_ribbon(aes(ymin=, ymax=), colour=)
