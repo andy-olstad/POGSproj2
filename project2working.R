@@ -60,7 +60,8 @@ year3_Summary <- arrange(year3_Summary, dayofweek, time)
 
 # New Data set for geom_ribbon
 new <- group_by(year3_Summary, time, add=FALSE)
-ribbon_data <- summarise(new, min_delay=min(mean_delay), max_delay=max(mean_delay))
+ribbon_data <- summarise
+write.csv(ribbon_data, "ribbon_graph_data.csv")
 
 write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 # Can find full output by clicking in Environment on the right
@@ -72,12 +73,12 @@ year3_Summary <- read.csv("3_year_summary_NEW.csv", header = T, stringsAsFactors
 # TS: Changed median to mean
 # JP: changed to year3_Summary
 library(ggplot2)
-qplot(dayofweek, mean_delay, data = year3_Summary, color = time)
-qplot(time, mean_delay, data = year3_Summary, color = dayofweek)
+qplot(dayofweek, mean_delay, data = year3_Summary_NEW, color = time)
+qplot(time, mean_delay, data = year3_Summary_NEW, color = dayofweek)
 
 # SG: changed to line plot
 plot <- ggplot() +
-  layer(data = year3_Summary,
+  layer(data = year3_Summary_NEW,
         stat = "identity",
         geom = "line",
         mapping = aes(x = time, 
@@ -94,7 +95,8 @@ plot
 
 # Tim working on the above plot
 # Success! This gives an "outline" of the population data that we can use for the superimposing
-plot <- ggplot(data = ribbon_data, mapping = aes(x = time)) + 
+ribbon_graph_data <- read.csv("ribbon_graph_data.csv", header = T, stringsAsFactors = F)
+plot <- ggplot(data = ribbon_graph_data, mapping = aes(x = time)) + 
   geom_ribbon(aes(ymin=min_delay, ymax=max_delay), fill="#999999") + 
   xlab("Time of departure") +
   ylab("Mean delay (minutes)")
