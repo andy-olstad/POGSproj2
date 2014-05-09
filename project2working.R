@@ -87,18 +87,3 @@ plot <- ggplot() +
                                  "Friday", "Saturday", "Sunday"))
 
 plot
-
-
-#########################################################################################
-#TODO:
-# need to group on departure time, not arrival - done
-# then look at arrival delay based on the time of day you left 
-# this should hopefully remove the need to deal with the 24h time snafu
-
-# graph by day - done
-
-# truncate arrival delay to remove negatives? - done
-
-#can we summarize before collect? - done
-#########################################################################################
-
