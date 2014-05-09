@@ -27,58 +27,6 @@ head(flights)
 tbl_df(head(flights))
 
 
-### I believe this was Andy's initial code here ###
-
-#######Charlotte's Database Modification on our behalf:
-#Instead of creating a new column I have created an index on: 
-#TRUNC(crsarrtime/100) - the hour part of the time.
-#This means queries like this:
-sched_time <- select(flights, year, month, dayofmonth, 
-                     crsarrtime, crsdeptime,origin,arrdelay,depdelay)
-sched_time_12 <- filter(sched_time, TRUNC(crsarrtime/100L) == 12) 
-sched_time_12_pdx13 <- filter(sched_time_12, origin == "PDX" && year == 2013) 
-
-
-explain(sched_time_12)
-head(sched_time_12)
-head(sched_time_12_pdx13)
-#AO wow that took a long time (5 minutes)... maybe there's a better way to do it?
-#AO only 2 minutes with slight rewrite
-dim(sched_time_12_pdx13)
-
-smallpdx<-collect(sched_time_12_pdx13)
-head(smallpdx)
-smallpdx_df<-tbl_df(smallpdx)
-
-#AO what can we learn about these delays?
-summarise(smallpdx_df, 
-          med_arr_delay = median(arrdelay, na.rm=TRUE),
-          mean_arr_delay = mean(arrdelay, na.rm=TRUE),
-          IQR_arr_delay = IQR(arrdelay, na.rm=TRUE))
-
-#AO find a ratio
-delay_pdx13<-summarize(filter(smallpdx, arrdelay>0),length=n())
-#  length
-#1   1385
-total_pdx13<-den<-summarize(smallpdx,length=n())
-#  length
-#1   4265
-delay_pdx13$length/total_pdx13$length
-#so 32% of flights from PDX were delayed in 2013.
-
-#AO: look at just PDX in September, because the load times are killing me:
-year13_NA_PDX<-filter(year13_NA,origin=="PDX") 
-head(year13_NA_PDX)
-
-#will use the index (you should see "Bitmap Index Scan on arr_hour" in the 
-#explain statement) and be relatively quick (the "L" on 100 is crucial for it
-# to pick up the index). 
-#You should also be able to use it in a group_by statement (remembering the
-# L on 100).
-#I'm adding the same thing for crsdeptime,
-
-### END OF ANDY's CODE
-
 
 
 ## THE MAIN CODING IS HERE SO FAR
@@ -95,11 +43,12 @@ year3 <- filter(flights_sub, year == 2013L | year == 2012L | year == 2011L)
 year3_TOD <- group_by(year3, dayofweek, time = (TRUNC(crsdeptime/100L)))
 # explain(year3_TOD)
 
-# TS: We can summarise()before we collect, which makes things run very fast.
+# TS: We can summarise() before we collect, which makes things run very fast.
 # TS: Note that we are using mean_delay, and forcing all negative delays to be zero (no reward for early arrival)
 # TS: Also note that SQL will automatically filter the NA's in arrdelay. However, there is one NA for 'time' which is addressed later
 Summary_3yr <- summarise(year3_TOD, n_flights = n(),
-                         mean_delay = mean(as.integer(arrdelay > 0)*arrdelay))
+                         mean_delay = mean(as.integer(arrdelay > 0)*arrdelay),
+                         prop_delay = mean(as.integer(arrdelay > 0)))
 # explain(Summary_3yr)
 
 system.time(year3_TODay <- collect(Summary_3yr))
@@ -107,7 +56,7 @@ system.time(year3_TODay <- collect(Summary_3yr))
 
 # Now there is
 year3_Summary <- filter(year3_TODay, time >= 0 )
-year3_Summary <- arrange(year3_TODay, dayofweek, time)
+year3_Summary <- arrange(year3_Summary, dayofweek, time)
 
 write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 # Can find full output by clicking in Environment on the right
