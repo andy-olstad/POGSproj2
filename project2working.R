@@ -68,6 +68,8 @@ write.csv(year3_Summary, file="3_year_summary_NEW.csv")
 
 # SG: read in summary csv
 year3_Summary <- read.csv("3_year_summary_NEW.csv", header = T, stringsAsFactors = F)
+# AO: renamed as year3_Summary_NEW because that's what the ggplot code calls
+year3_Summary_NEW<-year3_Summary
 
 # JP: Plot
 # TS: Changed median to mean
