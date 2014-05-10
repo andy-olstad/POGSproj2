@@ -98,12 +98,13 @@ plot
 # Tim working on the above plot
 # Success! This gives an "outline" of the population data that we can use for the superimposing
 ribbon_graph_data <- read.csv("ribbon_graph_data.csv", header = T, stringsAsFactors = F)
-plot <- ggplot(data = ribbon_graph_data, mapping = aes(x = time)) + 
+# renamed to plot2 separate from above
+plot2 <- ggplot(data = ribbon_graph_data, mapping = aes(x = time)) + 
   geom_ribbon(aes(ymin=min_delay, ymax=max_delay), fill="#999999") + 
   xlab("Time of departure") +
   ylab("Mean delay (minutes)")
 
-plot
+plot2
 # Try using geom_ribbon on the min and max maen delay per hour
 # First we will have to extract the min/max per day per hour into another data set
 # geom_ribbon(aes(ymin=, ymax=), colour=)
