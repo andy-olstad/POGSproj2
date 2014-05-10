@@ -228,19 +228,23 @@ write.csv(sample_summary_df,"SamplingResults")
 
 ###graphing a few exploratory plots
 
+##Overlay mean with adjusted mean:
 plot(sample_summary_df$Hour,sample_summary_df$Mean,ylim=c(-5,22))
 points(sample_summary_df$Hour,sample_summary_df$Mean_adj,col="red")
 diff<-sample_summary_df$Mean-sample_summary_df$Mean_adj
 plot(sample_summary_df$Hour,diff)
 
+##graph proporiton delayed
 plot(sample_summary_df$Hour,sample_summary_df$Proportion_Delay)
 
+##overlay mean with rescaled proportoin
 plot(sample_summary_df$Hour,sample_summary_df$Mean/max(sample_summary_df$Mean),col="red",pch=2)
 points(sample_summary_df$Hour,4*sample_summary_df$Proportion_Delay-1.2)
 
-
-plot(sample_summary_df$Hour,sample_summary_df$Mean)
-
-
 #Looks Familiar!!!
+
+
+##try for graph by hour
+plot(sample_summary_df$Day,sample_summary_df$Mean)
+
 

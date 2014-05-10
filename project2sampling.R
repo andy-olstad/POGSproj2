@@ -169,6 +169,7 @@ write.csv(TuesLocal,file= paste("Day","Tues","Hour",i))
 
 ######Now using that as an exemplar, let's try to loop through all week
 
+pop_summary<-read.csv(file="3_year_summary_NEW.csv")
 
 for(j in 1:7){
 
