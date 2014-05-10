@@ -248,14 +248,12 @@ plot3 <- ggplot() +
 
 plot3
 
-#need to overlay plot2 and plot3
 # SG: working on plot2 and plot3 overlay
-
 plot4 <- ggplot() +
   geom_ribbon(aes(ymin=ribbon_graph_data$min_delay, 
                   ymax=ribbon_graph_data$max_delay,
                   x = ribbon_graph_data$time), 
-              fill="#999999") +
+              fill="#B8B8B8") +
   layer(data = sampling_results,
         stat = "identity",
         geom = "line",
@@ -269,7 +267,9 @@ plot4 <- ggplot() +
                        labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
                                   "Friday", "Saturday", "Sunday"))  
 plot4
-# SG: it works! Colors are kind of unreadable.
+# SG: it works!
+# need to make lines thicker
+# need to make text bigger
 
 ###graphing a few exploratory plots
 
