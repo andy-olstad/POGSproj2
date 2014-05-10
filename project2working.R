@@ -249,6 +249,27 @@ plot3 <- ggplot() +
 plot3
 
 #need to overlay plot2 and plot3
+# SG: working on plot2 and plot3 overlay
+
+plot4 <- ggplot() +
+  geom_ribbon(aes(ymin=ribbon_graph_data$min_delay, 
+                  ymax=ribbon_graph_data$max_delay,
+                  x = ribbon_graph_data$time), 
+              fill="#999999") +
+  layer(data = sampling_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x = Hour, 
+                      y = Mean_adj, 
+                      color = as.factor(Day))) + 
+  xlab("Time of departure") +
+  ylab("Mean delay (minutes)") +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))  
+plot4
+# SG: it works! Colors are kind of unreadable.
 
 ###graphing a few exploratory plots
 
