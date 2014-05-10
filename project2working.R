@@ -253,22 +253,21 @@ plot4 <- ggplot() +
   geom_ribbon(aes(ymin=ribbon_graph_data$min_delay, 
                   ymax=ribbon_graph_data$max_delay,
                   x = ribbon_graph_data$time), 
-              fill="#B8B8B8") +
-  layer(data = sampling_results,
-        stat = "identity",
-        geom = "line",
-        mapping = aes(x = Hour, 
-                      y = Mean_adj, 
-                      color = as.factor(Day))) + 
+              fill="#B8B8B8") + 
+  geom_line(aes(x= sampling_results$Hour, 
+                y = sampling_results$Mean_adj, 
+                color = factor(sampling_results$Day), 
+                group=factor(sampling_results$Day)),
+            size = 1) +
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
   scale_color_discrete(name = "Day",
                        breaks = c("1","2","3","4","5","6","7"),
                        labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
-                                  "Friday", "Saturday", "Sunday"))  
+                                  "Friday", "Saturday", "Sunday"))   
 plot4
 # SG: it works!
-# need to make lines thicker
+
 # need to make text bigger
 
 ###graphing a few exploratory plots
