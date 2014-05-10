@@ -228,6 +228,27 @@ sample_summary_df[i,13]<-right_adj
 
 ###write file output
 write.csv(sample_summary_df,"SamplingResults")
+# read file output
+sampling_results <- read.csv("SamplingResults")
+
+#plot sampling results using Sarah's code above
+plot3 <- ggplot() +
+  layer(data = sampling_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x = Hour, 
+                      y = Mean_adj, 
+                      color = as.factor(Day))) + 
+  xlab("Time of departure") +
+  ylab("Mean delay (minutes)") +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))
+
+plot3
+
+#need to overlay plot2 and plot3
 
 ###graphing a few exploratory plots
 
