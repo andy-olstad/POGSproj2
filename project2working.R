@@ -241,7 +241,7 @@ plot3 <- ggplot() +
                       color = as.factor(Day))) + 
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
-  scale_color_discrete(name = "Day",
+  scale_color_discrete(name = "Day",http://127.0.0.1:38093/graphics/plot_zoom_png?width=1100&height=788
                        breaks = c("1","2","3","4","5","6","7"),
                        labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
                                   "Friday", "Saturday", "Sunday"))
@@ -258,17 +258,18 @@ plot4 <- ggplot() +
                 y = sampling_results$Mean_adj, 
                 color = factor(sampling_results$Day), 
                 group=factor(sampling_results$Day)),
-            size = 1) +
+            size = 2) +
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
+  theme_bw(18) +
   scale_color_discrete(name = "Day",
                        breaks = c("1","2","3","4","5","6","7"),
                        labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
-                                  "Friday", "Saturday", "Sunday"))   
+                                  "Friday", "Saturday", "Sunday"),
+                       guide = guide_legend(title.theme = element_text(size=18, angle = 0),
+                                            label.theme = element_text(size = 15, angle = 0)))    
 plot4
 # SG: it works!
-
-# need to make text bigger
 
 ###graphing a few exploratory plots
 
