@@ -80,18 +80,20 @@ qplot(time, mean_delay, data = year3_Summary_NEW, color = dayofweek)
 
 # SG: changed to line plot
 plot <- ggplot() +
-  layer(data = year3_Summary_NEW,
-        stat = "identity",
-        geom = "line",
-        mapping = aes(x = time, 
-                      y = mean_delay, 
-                      color = as.factor(dayofweek))) + 
+  geom_line(aes(x= year3_Summary_NEW$time, 
+                y = year3_Summary_NEW$mean_delay, 
+                color = factor(year3_Summary_NEW$dayofweek), 
+                group=factor(year3_Summary_NEW$dayofweek)),
+            size = 2) +
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
-  scale_color_discrete(name = "Day of week",
-                      breaks = c("1","2","3","4","5","6","7"),
-                      labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
-                                 "Friday", "Saturday", "Sunday"))
+  theme_bw(18) +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"),
+                       guide = guide_legend(title.theme = element_text(size=18, angle = 0),
+                                            label.theme = element_text(size = 15, angle = 0)))
 
 plot
 
@@ -241,7 +243,7 @@ plot3 <- ggplot() +
                       color = as.factor(Day))) + 
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
-  scale_color_discrete(name = "Day",http://127.0.0.1:38093/graphics/plot_zoom_png?width=1100&height=788
+  scale_color_discrete(name = "Day",
                        breaks = c("1","2","3","4","5","6","7"),
                        labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
                                   "Friday", "Saturday", "Sunday"))
