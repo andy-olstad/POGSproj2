@@ -260,7 +260,7 @@ plot4 <- ggplot() +
                 y = sampling_results$Mean_adj, 
                 color = factor(sampling_results$Day), 
                 group=factor(sampling_results$Day)),
-            size = 2) +
+            size = 1) +
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
   theme_bw(18) +
