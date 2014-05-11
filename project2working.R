@@ -84,7 +84,7 @@ plot <- ggplot() +
                 y = year3_Summary_NEW$mean_delay, 
                 color = factor(year3_Summary_NEW$dayofweek), 
                 group=factor(year3_Summary_NEW$dayofweek)),
-            size = 2) +
+            size = 1) +
   xlab("Time of departure") +
   ylab("Mean delay (minutes)") +
   theme_bw(18) +
