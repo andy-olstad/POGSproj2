@@ -315,7 +315,7 @@ Pause <- function () {
     invisible()
 }
 
-for(j in 1:23){
+for(j in 1:24){
 
 h<-j-1
 
@@ -336,10 +336,144 @@ drop1(fit,~.,test="F") # type III SS and F Tests
 #Pause
 }
 
-mutate(big,hour=trunc(crsdeptime/100))
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    20783    3464    4.03 0.000488 ***
+#Residuals                13912 11958276     860                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#114 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)
+#as.factor(big$dayofweek)     6     8560    1427   1.301  0.253
+#Residuals                12424 13624130    1097               
+#88 observations deleted due to missingness
+#                           Df  Sum Sq Mean Sq F value Pr(>F)
+#as.factor(big$dayofweek)    6   15808    2635   1.773  0.101
+#Residuals                2381 3538362    1486               
+#30 observations deleted due to missingness
+#                           Df  Sum Sq Mean Sq F value  Pr(>F)   
+#as.factor(big$dayofweek)    6   29973    4995   3.124 0.00475 **
+#Residuals                1869 2988374    1599                   
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#33 observations deleted due to missingness
+#                           Df  Sum Sq Mean Sq F value Pr(>F)
+#as.factor(big$dayofweek)    6    7241  1206.8   1.362  0.226
+#Residuals                1810 1603783   886.1               
+#27 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)
+#as.factor(big$dayofweek)     6     2547   424.6   0.425  0.862
+#Residuals                13587 13557726   997.8               
+#243 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)
+#as.factor(big$dayofweek)     6    10233    1706   1.571  0.151
+#Residuals                13814 14995019    1086               
+#264 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    33932    5655   6.285 1.31e-06 ***
+#Residuals                13780 12399577     900                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#230 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)   
+#as.factor(big$dayofweek)     6    17310  2885.0   2.908 0.0078 **
+#Residuals                13715 13606411   992.1                  
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#223 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    24299    4050   4.253 0.000276 ***
+#Residuals                13766 13106652     952   
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#205 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)  
+#as.factor(big$dayofweek)     6    16857    2810    2.64 0.0147 *
+#Residuals                13671 14546690    1064                 
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#193 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    36305    6051   5.457 1.19e-05 ***
+#Residuals                13755 15253120    1109                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#204 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value  Pr(>F)    
+#as.factor(big$dayofweek)     6    49795    8299   6.912 2.4e-07 ***
+#Residuals                13741 16498591    1201                    
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#236 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    44982    7497    6.02 2.66e-06 ***
+#Residuals                13836 17230471    1245                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#236 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    51248    8541   6.323 1.18e-06 ***
+#Residuals                13888 18760748    1351                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#276 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    50806    8468   6.224 1.54e-06 ***
+#Residuals                13786 18756631    1361                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#242 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    60972   10162   6.414 9.24e-07 ***
+#Residuals                13735 21762114    1584                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#289 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    50508    8418    4.71 8.48e-05 ***
+#Residuals                13773 24614130    1787                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#270 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6   128663   21444   12.42 5.29e-14 ***
+#Residuals                13596 23475416    1727                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#283 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)    
+#as.factor(big$dayofweek)     6   144503   24084   14.57 <2e-16 ***
+#Residuals                13754 22738128    1653                   
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#283 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)    
+#as.factor(big$dayofweek)     6   230019   38336   22.84 <2e-16 ***
+#Residuals                13706 23007364    1679                   
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#277 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value Pr(>F)    
+#as.factor(big$dayofweek)     6   125029   20838   14.94 <2e-16 ***
+#Residuals                13656 19050426    1395                   
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#265 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value  Pr(>F)    
+#as.factor(big$dayofweek)     6    79975   13329   11.34 1.1e-12 ***
+#Residuals                13669 16063164    1175                    
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#252 observations deleted due to missingness
+#                            Df   Sum Sq Mean Sq F value   Pr(>F)    
+#as.factor(big$dayofweek)     6    52123    8687   5.943 3.27e-06 ***
+#Residuals                13550 19805536    1462                     
+#---
+#Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+#162 observations deleted due to missingness
 
 
-#complex survey design ideas:
+
+##complex survey design ideas:
 #library(survey)
 #daysANDtimes<-c(1:28)
 #daysANDtimesSizes<-c(2:29)

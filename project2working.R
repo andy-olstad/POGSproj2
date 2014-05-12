@@ -321,7 +321,7 @@ plot5
 ###########Can we do an ANOVA test on the sample data?
 ###########Looking to see if sampling tells us there's a difference by day
 
-for(j in 1:23){
+for(j in 1:24){
 
 h<-j-1
 
