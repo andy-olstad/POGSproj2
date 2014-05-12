@@ -226,7 +226,7 @@ N<-pop_summary[which(pop_summary$dayofweek==5 & pop_summary$time==13),4]
 
 
 #build a data frame to store this information:
-sample_summary_df = data.frame(matrix(vector(), 168, 13, dimnames=list(c(), c("Day","Hour","Mean", "Median", "IQR", "LowerCL","UpperCL", "n_sample", "N_pop", "Proportion_Delay","Mean_adj","LowerCL_adj","UpperCL_adj"))), stringsAsFactors=F)
+sample_summary_df = data.frame(matrix(vector(), 168, 14, dimnames=list(c(), c("Day","Hour","Mean", "Median", "IQR", "LowerCL","UpperCL", "n_sample", "N_pop", "Proportion_Delay","Mean_adj","LowerCL_adj","UpperCL_adj","Long_Delay"))), stringsAsFactors=F)
 
 #hand populate that dataframe
 sample_summary_df[133,1]<-5
@@ -242,6 +242,7 @@ sample_summary_df[133,10]<-proportion_delay
 sample_summary_df[133,11]<-adjusted_mean_delay
 sample_summary_df[133,12]<-left_adj
 sample_summary_df[133,13]<-right_adj
+sample_summary_df[133,13]<-long_delay
 
 #now let's loop it!
 for(i in 1:168){
@@ -270,6 +271,8 @@ proportion_delay<-nrow(data[which(data[,7]>0),])/n
 iqr<-IQR(data$arrdelay,na.rm=TRUE)
 N<-pop_summary[which(pop_summary$dayofweek==d & pop_summary$time==h),4]
 
+long_delay<-nrow(data[which(data[,7]>15),])/n
+
 sample_summary_df[i,1]<-d
 sample_summary_df[i,2]<-h
 sample_summary_df[i,3]<-avg
@@ -283,6 +286,8 @@ sample_summary_df[i,10]<-proportion_delay
 sample_summary_df[i,11]<-adjusted_mean_delay
 sample_summary_df[i,12]<-left_adj
 sample_summary_df[i,13]<-right_adj
+sample_summary_df[i,14]<-long_delay
+
 }
 
 #write file output
@@ -299,6 +304,8 @@ diff<-sample_summary_df$Mean-sample_summary_df$Mean_adj
 plot(sample_summary_df$Hour,diff)
 
 plot(sample_summary_df$Hour,sample_summary_df$Proportion_Delay)
+plot(sample_summary_df$Hour,sample_summary_df$Long_Delay)
+
 
 plot(sample_summary_df$Hour,sample_summary_df$Mean/max(sample_summary_df$Mean),col="red",pch=2)
 points(sample_summary_df$Hour,4*sample_summary_df$Proportion_Delay-1.2)
