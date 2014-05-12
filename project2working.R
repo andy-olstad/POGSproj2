@@ -293,5 +293,32 @@ points(sampling_results$Hour,4*sampling_results$Proportion_Delay-1.2)
 
 ##try for graph by hour
 plot(sampling_results$Day,sampling_results$Mean)
+days<-c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday")
+delays<-rep(0,7)
+for(i in 1:7){
+delays[i]<-mean(sampling_results$Mean[i-1:24*i])
+}
+plot(c(1:7),delays,ylab="Delay (min)",x =days)
+
+
+#plot sampling results using Sarah's code above
+plot5 <- ggplot() +
+  layer(data = sampling_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x = Day, 
+                      y = Mean_adj, 
+                      color = as.factor(Hour))) + 
+  xlab("Day of Departure") +
+  ylab("Mean delay (minutes)") +
+  scale_color_discrete(name = "Hour",
+                       breaks = c(0:23),
+                       labels = c(0:23))
+
+plot5
+
+
+
 
 
