@@ -472,6 +472,11 @@ drop1(fit,~.,test="F") # type III SS and F Tests
 #162 observations deleted due to missingness
 
 
+###get some sizes on those confidence intervals
+margin<-mutate(sampling_results,
+ME=(UpperCL_adj - LowerCL_adj)/2)
+summary(margin$ME)
+
 
 ##complex survey design ideas:
 #library(survey)
