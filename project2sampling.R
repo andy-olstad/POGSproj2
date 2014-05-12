@@ -491,3 +491,90 @@ summary(margin$ME)
 #svydesign(~0, probs=daysANDtimesSizes, strata = daysANDtimes, variables = NULL, fpc=NULL,
 #data = NULL, nest = TRUE, check.strata = FALSE, weights=NULL,pps=FALSE)
 
+
+### Look at that 3am spike
+
+h<- 3
+big<-read.csv(paste("Day",1,"Hour",h))
+#now let's loop it!
+for(i in 2:7){
+data<-read.csv(paste("Day",i,"Hour",h))
+big<-rbind(big,data)
+}
+
+
+head(big)
+big$arrdelay
+summary(big$arrdelay)
+summary(big$crsdeptime)
+length(big$arrdelay)
+#confirming that we have the whole population:
+pop_summary[which(pop_summary$time==3),]
+sum(pop_summary$n_flights[which(pop_summary$time==3)])
+#yep, that's all 1909
+
+#plot delay vs. time
+plot(big$crsdeptime,big$arrdelay, xlab="Departure Times",ylab="Arrival Delay",
+ main = "3am departures: 1909 Flights in 3 years")
+summary(big$arrdelay)
+  Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+ -45.00  -13.00   -2.00   10.43   16.00  349.00      33 
+
+#look for flights delayed more than 1 hour)
+long_delay<-filter(big,arrdelay>=60)
+
+plot(long_delay$crsdeptime,long_delay$arrdelay)
+spike_pop<-pop_summary[which(pop_summary$time==3),]
+sum(spike_pop$n_flights)
+
+
+##compare to 2am:
+
+h<- 2
+big<-read.csv(paste("Day",1,"Hour",h))
+#now let's loop it!
+for(i in 2:7){
+data<-read.csv(paste("Day",i,"Hour",h))
+big<-rbind(big,data)
+}
+
+
+head(big)
+big$arrdelay
+summary(big$arrdelay)
+summary(big$crsdeptime)
+length(big$arrdelay)
+#confirming that we have the whole population:
+pop_summary[which(pop_summary$time==2),]
+sum(pop_summary$n_flights[which(pop_summary$time==2)])
+
+#plot delay vs. time
+plot(big$crsdeptime,big$arrdelay, xlab="Departure Times",ylab="Arrival Delay",
+ main = "2am departures: 2418 Flights in 3 years")
+summary(big$arrdelay)
+
+##compare to 4am:
+
+h<- 4
+big<-read.csv(paste("Day",1,"Hour",h))
+#now let's loop it!
+for(i in 2:7){
+data<-read.csv(paste("Day",i,"Hour",h))
+big<-rbind(big,data)
+}
+
+
+head(big)
+big$arrdelay
+summary(big$arrdelay)
+summary(big$crsdeptime)
+length(big$arrdelay)
+#confirming that we have the whole population:
+pop_summary[which(pop_summary$time==4),]
+sum(pop_summary$n_flights[which(pop_summary$time==4)])
+
+#plot delay vs. time
+plot(big$crsdeptime,big$arrdelay, xlab="Departure Times",ylab="Arrival Delay",
+ main = "4am departures: 1844 Flights in 3 years")
+summary(big$arrdelay)
+
