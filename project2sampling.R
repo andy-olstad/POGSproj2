@@ -672,5 +672,23 @@ plot9 <- ggplot() +
 
 plot9
 
+plot10 <- ggplot() +
+  layer(data = sample_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x =Hour, 
+                      y = Long_Delay, 
+                      color = as.factor(Day))) + 
+  xlab("Day of Departure") +
+  theme_bw(18) +
+  ylab("Proportion of Flights with Long Delays") +
+  labs(title = "Flights Delayed over 15 minutes") +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))
+
+plot10
+
 
 
