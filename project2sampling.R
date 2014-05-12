@@ -307,6 +307,38 @@ plot(sample_summary_df$Hour,sample_summary_df$Mean)
 #Looks Familiar!!!
 
 
+###########Can we do an ANOVA test on the sample data?
+
+Pause <- function () { 
+    cat("Hit <enter> to continue...")
+    readline()
+    invisible()
+}
+
+for(j in 1:23){
+
+h<-j-1
+
+big<-read.csv(paste("Day",1,"Hour",h))
+#now let's loop it!
+for(i in 2:7){
+data<-read.csv(paste("Day",i,"Hour",h))
+big<-rbind(big,data)
+}
+
+
+###Perform an ANOVA test to see if there's any day effect
+fit<-aov(big$arrdelay ~ as.factor(big$dayofweek))
+print(summary(fit))
+#p-value: 
+drop1(fit,~.,test="F") # type III SS and F Tests
+
+#Pause
+}
+
+mutate(big,hour=trunc(crsdeptime/100))
+
+
 #complex survey design ideas:
 #library(survey)
 #daysANDtimes<-c(1:28)
