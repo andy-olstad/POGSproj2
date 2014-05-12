@@ -288,6 +288,9 @@ sample_summary_df[i,13]<-right_adj
 #write file output
 write.csv(sample_summary_df,"SamplingResults")
 
+#read it back later
+sample_summary_df<-read.csv(file="SamplingResults")
+
 #graphing
 
 plot(sample_summary_df$Hour,sample_summary_df$Mean,ylim=c(-5,22))
@@ -305,6 +308,8 @@ plot(sample_summary_df$Hour,sample_summary_df$Mean)
 
 
 #Looks Familiar!!!
+
+
 
 
 ###########Can we do an ANOVA test on the sample data?
@@ -577,4 +582,88 @@ sum(pop_summary$n_flights[which(pop_summary$time==4)])
 plot(big$crsdeptime,big$arrdelay, xlab="Departure Times",ylab="Arrival Delay",
  main = "4am departures: 1844 Flights in 3 years")
 summary(big$arrdelay)
+
+
+#####try using small replicates to show the same shape
+library(ggplot2)
+sample_results<-read.csv(file="SamplingResults")
+
+days<-c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday")
+
+
+#plot sampling results using Sarah's code above
+plot6 <- ggplot() +
+  layer(data = sample_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x =Hour, 
+                      y = Mean_adj, 
+                      color = as.factor(Day))) + 
+  xlab("Day of Departure") +
+  ylab("Mean delay (minutes)") +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))
+
+plot6
+
+#Adjusted Mean Delays
+plot7 <- ggplot() +
+  layer(data = sample_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x =Hour, 
+                      y = Mean_adj, 
+                      color = as.factor(Day))) + 
+  xlab("Day of Departure") +
+  ylab("Mean delay (minutes)") +
+  labs(title = "Adjusted Mean Delays") +
+  theme_bw(18) +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))
+
+plot7
+
+#Raw Means
+plot8 <- ggplot() +
+  layer(data = sample_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x =Hour, 
+                      y = Mean, 
+                      color = as.factor(Day))) + 
+  xlab("Day of Departure") +
+  ylab("Mean delay (minutes)") +
+  theme_bw(18) +
+  labs(title = "Mean Delay (counting negative delays)") +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))
+
+plot8
+
+plot9 <- ggplot() +
+  layer(data = sample_results,
+        stat = "identity",
+        geom = "line",
+        mapping = aes(x =Hour, 
+                      y = Proportion_Delay, 
+                      color = as.factor(Day))) + 
+  xlab("Day of Departure") +
+  theme_bw(18) +
+  ylab("Mean delay (minutes)") +
+  labs(title = "Proportion of Delays") +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"))
+
+plot9
+
+
 
