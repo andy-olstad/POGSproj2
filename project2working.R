@@ -234,6 +234,7 @@ write.csv(sample_summary_df,"SamplingResults")
 sampling_results <- read.csv("SamplingResults")
 
 #plot sampling results using Sarah's code above
+
 plot3 <- ggplot() +
   layer(data = sampling_results,
         stat = "identity",
@@ -271,6 +272,24 @@ plot4 <- ggplot() +
                        guide = guide_legend(title.theme = element_text(size=18, angle = 0),
                                             label.theme = element_text(size = 15, angle = 0)))    
 plot4
+
+#plot of just the sampling results for the presentation
+plot4_1 <- ggplot() +
+  geom_line(aes(x= sampling_results$Hour, 
+                y = sampling_results$Mean_adj, 
+                color = factor(sampling_results$Day), 
+                group=factor(sampling_results$Day)),
+            size = 1) +
+  xlab("Time of departure") +
+  ylab("Mean delay (minutes)") +
+  theme_bw(18) +
+  scale_color_discrete(name = "Day",
+                       breaks = c("1","2","3","4","5","6","7"),
+                       labels = c("Monday", "Tuesday", "Wednesday", "Thursday", 
+                                  "Friday", "Saturday", "Sunday"),
+                       guide = guide_legend(title.theme = element_text(size=18, angle = 0),
+                                            label.theme = element_text(size = 15, angle = 0)))    
+plot4_1
 # SG: it works!
 
 ###graphing a few exploratory plots
